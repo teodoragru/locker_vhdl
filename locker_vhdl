@@ -1,0 +1,41 @@
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+entity locker is
+port(   
+    signal_in : in std_logic;
+    clk : in std_logic;
+    reset : in std_logic;
+    lock : out std_logic;
+    error : out std_logic
+);
+end entity;
+
+architecture rtl of locker is
+	signal num_valid_prenos: std_logic;
+	signal num_value_prenos: std_logic_vector(3 downto 0);
+	signal cmd_ok_prenos: std_logic;
+	signal cmd_cancel_prenos: std_logic;
+	
+begin
+   
+	decode: entity work.locker_decode_cmd port map(	reset=>reset, 
+													clk=>clk, 
+													signal_in=>signal_in,
+													num_value => num_value_prenos,
+													cmd_ok => cmd_ok_prenos,
+													cmd_cancel => cmd_cancel_prenos,
+													num_valid => num_valid_prenos
+													);
+	control: entity work.locker_control port map(	reset=>reset, 
+													clk=>clk,  
+													lock => lock, 
+													error => error,
+													num_value => num_value_prenos,
+													cmd_ok => cmd_ok_prenos,
+													cmd_cancel => cmd_cancel_prenos,
+													num_valid => num_valid_prenos);
+	
+
+end architecture;
